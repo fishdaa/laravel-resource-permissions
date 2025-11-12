@@ -13,7 +13,7 @@ use Spatie\Permission\Models\Role;
 trait HasResourcePermissions
 {
     /**
-     * Check if the user has a specific permission for a resource.
+     * Check if this model has a specific permission for a resource.
      *
      * @param  string|PermissionContract  $permission
      * @param  mixed  $resource
@@ -32,7 +32,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Check if the user has any of the given permissions for a resource.
+     * Check if this model has any of the given permissions for a resource.
      *
      * @param  array|string|SupportCollection  $permissions
      * @param  mixed  $resource
@@ -52,7 +52,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Check if the user has all of the given permissions for a resource.
+     * Check if this model has all of the given permissions for a resource.
      *
      * @param  array|string|SupportCollection  $permissions
      * @param  mixed  $resource
@@ -87,7 +87,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Give permission to the user for a specific resource.
+     * Give permission to this model for a specific resource.
      *
      * @param  string|PermissionContract  $permission
      * @param  mixed  $resource
@@ -103,7 +103,8 @@ trait HasResourcePermissions
         }
 
         ModelHasResourceAndPermission::firstOrCreate([
-            'user_id' => $this->id,
+            'model_type' => get_class($this),
+            'model_id' => $this->id,
             'resource_type' => get_class($resource),
             'resource_id' => $resource->id,
             'permission_id' => $permission->id,
@@ -115,7 +116,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Revoke permission from the user for a specific resource.
+     * Revoke permission from this model for a specific resource.
      *
      * @param  string|PermissionContract  $permission
      * @param  mixed  $resource
@@ -129,7 +130,8 @@ trait HasResourcePermissions
             return $this;
         }
 
-        ModelHasResourceAndPermission::where('user_id', $this->id)
+        ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->where('permission_id', $permission->id)
@@ -139,7 +141,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Sync permissions for the user for a specific resource.
+     * Sync permissions for this model for a specific resource.
      *
      * @param  array|string|SupportCollection  $permissions
      * @param  mixed  $resource
@@ -152,7 +154,8 @@ trait HasResourcePermissions
         $permissionIds = $permissions->pluck('id')->toArray();
 
         // Get existing permission IDs for this resource
-        $existingPermissionIds = ModelHasResourceAndPermission::where('user_id', $this->id)
+        $existingPermissionIds = ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('permission_id')
@@ -162,7 +165,8 @@ trait HasResourcePermissions
         // Remove permissions that are not in the new list
         $permissionsToRemove = array_diff($existingPermissionIds, $permissionIds);
         if (! empty($permissionsToRemove)) {
-            ModelHasResourceAndPermission::where('user_id', $this->id)
+            ModelHasResourceAndPermission::where('model_type', get_class($this))
+                ->where('model_id', $this->id)
                 ->where('resource_type', get_class($resource))
                 ->where('resource_id', $resource->id)
                 ->whereIn('permission_id', $permissionsToRemove)
@@ -173,7 +177,8 @@ trait HasResourcePermissions
         foreach ($permissionIds as $permissionId) {
             if (! in_array($permissionId, $existingPermissionIds)) {
                 ModelHasResourceAndPermission::firstOrCreate([
-                    'user_id' => $this->id,
+                    'model_type' => get_class($this),
+                    'model_id' => $this->id,
                     'resource_type' => get_class($resource),
                     'resource_id' => $resource->id,
                     'permission_id' => $permissionId,
@@ -198,7 +203,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Assign a role to the user for a specific resource.
+     * Assign a role to this model for a specific resource.
      *
      * @param  string|RoleContract  $role
      * @param  mixed  $resource
@@ -214,7 +219,8 @@ trait HasResourcePermissions
         }
 
         ModelHasResourceAndPermission::firstOrCreate([
-            'user_id' => $this->id,
+            'model_type' => get_class($this),
+            'model_id' => $this->id,
             'resource_type' => get_class($resource),
             'resource_id' => $resource->id,
             'role_id' => $role->id,
@@ -226,7 +232,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Remove a role from the user for a specific resource.
+     * Remove a role from this model for a specific resource.
      *
      * @param  string|RoleContract  $role
      * @param  mixed  $resource
@@ -240,7 +246,8 @@ trait HasResourcePermissions
             return $this;
         }
 
-        ModelHasResourceAndPermission::where('user_id', $this->id)
+        ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->where('role_id', $role->id)
@@ -250,7 +257,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Sync roles for the user for a specific resource.
+     * Sync roles for this model for a specific resource.
      *
      * @param  array|string|SupportCollection  $roles
      * @param  mixed  $resource
@@ -263,7 +270,8 @@ trait HasResourcePermissions
         $roleIds = $roles->pluck('id')->toArray();
 
         // Get existing role IDs for this resource
-        $existingRoleIds = ModelHasResourceAndPermission::where('user_id', $this->id)
+        $existingRoleIds = ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('role_id')
@@ -273,7 +281,8 @@ trait HasResourcePermissions
         // Remove roles that are not in the new list
         $rolesToRemove = array_diff($existingRoleIds, $roleIds);
         if (! empty($rolesToRemove)) {
-            ModelHasResourceAndPermission::where('user_id', $this->id)
+            ModelHasResourceAndPermission::where('model_type', get_class($this))
+                ->where('model_id', $this->id)
                 ->where('resource_type', get_class($resource))
                 ->where('resource_id', $resource->id)
                 ->whereIn('role_id', $rolesToRemove)
@@ -284,7 +293,8 @@ trait HasResourcePermissions
         foreach ($roleIds as $roleId) {
             if (! in_array($roleId, $existingRoleIds)) {
                 ModelHasResourceAndPermission::firstOrCreate([
-                    'user_id' => $this->id,
+                    'model_type' => get_class($this),
+                    'model_id' => $this->id,
                     'resource_type' => get_class($resource),
                     'resource_id' => $resource->id,
                     'role_id' => $roleId,
@@ -298,7 +308,7 @@ trait HasResourcePermissions
     }
 
     /**
-     * Check if the user has a specific role for a resource.
+     * Check if this model has a specific role for a resource.
      *
      * @param  string|RoleContract  $role
      * @param  mixed  $resource
@@ -312,7 +322,8 @@ trait HasResourcePermissions
             return false;
         }
 
-        return ModelHasResourceAndPermission::where('user_id', $this->id)
+        return ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->where('role_id', $role->id)
@@ -327,7 +338,8 @@ trait HasResourcePermissions
      */
     public function getRolesForResource($resource): Collection
     {
-        $roleIds = ModelHasResourceAndPermission::where('user_id', $this->id)
+        $roleIds = ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('role_id')
@@ -344,7 +356,8 @@ trait HasResourcePermissions
      */
     protected function getResourcePermissions($resource): Collection
     {
-        $permissionIds = ModelHasResourceAndPermission::where('user_id', $this->id)
+        $permissionIds = ModelHasResourceAndPermission::where('model_type', get_class($this))
+            ->where('model_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('permission_id')

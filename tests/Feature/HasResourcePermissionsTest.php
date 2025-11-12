@@ -46,7 +46,8 @@ class HasResourcePermissionsTest extends TestCase
 
         $this->assertTrue($this->user->hasPermissionForResource('edit-article', $this->article));
         $this->assertDatabaseHas(config('resource-permissions.table_name', 'model_has_resource_and_permissions'), [
-            'user_id' => $this->user->id,
+            'model_type' => User::class,
+            'model_id' => $this->user->id,
             'resource_type' => Article::class,
             'resource_id' => $this->article->id,
             'permission_id' => $this->permission->id,
@@ -71,7 +72,8 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->givePermissionToResource('edit-article', $this->article, $creator->id);
 
         $this->assertDatabaseHas(config('resource-permissions.table_name', 'model_has_resource_and_permissions'), [
-            'user_id' => $this->user->id,
+            'model_type' => User::class,
+            'model_id' => $this->user->id,
             'created_by' => $creator->id,
         ]);
     }
@@ -144,7 +146,8 @@ class HasResourcePermissionsTest extends TestCase
 
         $this->assertTrue($this->user->hasRoleForResource('article-editor', $this->article));
         $this->assertDatabaseHas(config('resource-permissions.table_name', 'model_has_resource_and_permissions'), [
-            'user_id' => $this->user->id,
+            'model_type' => User::class,
+            'model_id' => $this->user->id,
             'resource_type' => Article::class,
             'resource_id' => $this->article->id,
             'role_id' => $this->role->id,
@@ -211,7 +214,8 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->givePermissionToResource('edit-article', $this->article);
         $this->user->givePermissionToResource('edit-article', $this->article); // Should not create duplicate
 
-        $count = ModelHasResourceAndPermission::where('user_id', $this->user->id)
+        $count = ModelHasResourceAndPermission::where('model_type', User::class)
+            ->where('model_id', $this->user->id)
             ->where('resource_type', Article::class)
             ->where('resource_id', $this->article->id)
             ->where('permission_id', $this->permission->id)
@@ -225,7 +229,8 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->assignRoleToResource('article-editor', $this->article);
         $this->user->assignRoleToResource('article-editor', $this->article); // Should not create duplicate
 
-        $count = ModelHasResourceAndPermission::where('user_id', $this->user->id)
+        $count = ModelHasResourceAndPermission::where('model_type', User::class)
+            ->where('model_id', $this->user->id)
             ->where('resource_type', Article::class)
             ->where('resource_id', $this->article->id)
             ->where('role_id', $this->role->id)

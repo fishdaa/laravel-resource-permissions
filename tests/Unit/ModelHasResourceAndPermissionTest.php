@@ -26,7 +26,8 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $permission = Permission::create(['name' => 'edit-article']);
 
         $resourcePermission = ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission->id,
@@ -48,7 +49,8 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $permission = Permission::create(['name' => 'edit-article']);
 
         $resourcePermission = ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission->id,
@@ -70,7 +72,8 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $permission = Permission::create(['name' => 'edit-article']);
 
         $resourcePermission = ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission->id,
@@ -92,7 +95,8 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $role = Role::create(['name' => 'article-manager']);
 
         $resourcePermission = ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'role_id' => $role->id,
@@ -120,7 +124,8 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $permission = Permission::create(['name' => 'edit-article']);
 
         $resourcePermission = ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission->id,
@@ -144,14 +149,16 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $permission = Permission::create(['name' => 'edit-article']);
 
         ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article1->id,
             'permission_id' => $permission->id,
         ]);
 
         ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article2->id,
             'permission_id' => $permission->id,
@@ -176,14 +183,16 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $permission2 = Permission::create(['name' => 'view-article']);
 
         ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission1->id,
         ]);
 
         ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission2->id,
@@ -208,14 +217,16 @@ class ModelHasResourceAndPermissionTest extends TestCase
         $role2 = Role::create(['name' => 'article-viewer']);
 
         ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'role_id' => $role1->id,
         ]);
 
         ModelHasResourceAndPermission::create([
-            'user_id' => $user->id,
+            'model_type' => User::class,
+            'model_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'role_id' => $role2->id,
