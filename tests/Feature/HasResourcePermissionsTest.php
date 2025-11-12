@@ -2,7 +2,7 @@
 
 namespace Fishdaa\LaravelResourcePermissions\Tests\Feature;
 
-use Fishdaa\LaravelResourcePermissions\Models\UserHasResourceAndPermission;
+use Fishdaa\LaravelResourcePermissions\Models\ModelHasResourceAndPermission;
 use Fishdaa\LaravelResourcePermissions\Tests\Article;
 use Fishdaa\LaravelResourcePermissions\Tests\TestCase;
 use Fishdaa\LaravelResourcePermissions\Tests\User;
@@ -211,7 +211,7 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->givePermissionToResource('edit-article', $this->article);
         $this->user->givePermissionToResource('edit-article', $this->article); // Should not create duplicate
 
-        $count = UserHasResourceAndPermission::where('user_id', $this->user->id)
+        $count = ModelHasResourceAndPermission::where('user_id', $this->user->id)
             ->where('resource_type', Article::class)
             ->where('resource_id', $this->article->id)
             ->where('permission_id', $this->permission->id)
@@ -225,7 +225,7 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->assignRoleToResource('article-editor', $this->article);
         $this->user->assignRoleToResource('article-editor', $this->article); // Should not create duplicate
 
-        $count = UserHasResourceAndPermission::where('user_id', $this->user->id)
+        $count = ModelHasResourceAndPermission::where('user_id', $this->user->id)
             ->where('resource_type', Article::class)
             ->where('resource_id', $this->article->id)
             ->where('role_id', $this->role->id)

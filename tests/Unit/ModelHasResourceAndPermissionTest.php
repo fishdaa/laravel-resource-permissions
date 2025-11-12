@@ -2,7 +2,7 @@
 
 namespace Fishdaa\LaravelResourcePermissions\Tests\Unit;
 
-use Fishdaa\LaravelResourcePermissions\Models\UserHasResourceAndPermission;
+use Fishdaa\LaravelResourcePermissions\Models\ModelHasResourceAndPermission;
 use Fishdaa\LaravelResourcePermissions\Tests\Article;
 use Fishdaa\LaravelResourcePermissions\Tests\TestCase;
 use Fishdaa\LaravelResourcePermissions\Tests\User;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class UserHasResourceAndPermissionTest extends TestCase
+class ModelHasResourceAndPermissionTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -25,7 +25,7 @@ class UserHasResourceAndPermissionTest extends TestCase
         $article = Article::create(['title' => 'Test Article', 'content' => 'Test content']);
         $permission = Permission::create(['name' => 'edit-article']);
 
-        $resourcePermission = UserHasResourceAndPermission::create([
+        $resourcePermission = ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
@@ -47,7 +47,7 @@ class UserHasResourceAndPermissionTest extends TestCase
         $article = Article::create(['title' => 'Test Article', 'content' => 'Test content']);
         $permission = Permission::create(['name' => 'edit-article']);
 
-        $resourcePermission = UserHasResourceAndPermission::create([
+        $resourcePermission = ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
@@ -69,7 +69,7 @@ class UserHasResourceAndPermissionTest extends TestCase
         $article = Article::create(['title' => 'Test Article', 'content' => 'Test content']);
         $permission = Permission::create(['name' => 'edit-article']);
 
-        $resourcePermission = UserHasResourceAndPermission::create([
+        $resourcePermission = ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
@@ -91,7 +91,7 @@ class UserHasResourceAndPermissionTest extends TestCase
         $article = Article::create(['title' => 'Test Article', 'content' => 'Test content']);
         $role = Role::create(['name' => 'article-manager']);
 
-        $resourcePermission = UserHasResourceAndPermission::create([
+        $resourcePermission = ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
@@ -119,7 +119,7 @@ class UserHasResourceAndPermissionTest extends TestCase
         $article = Article::create(['title' => 'Test Article', 'content' => 'Test content']);
         $permission = Permission::create(['name' => 'edit-article']);
 
-        $resourcePermission = UserHasResourceAndPermission::create([
+        $resourcePermission = ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
@@ -143,21 +143,21 @@ class UserHasResourceAndPermissionTest extends TestCase
         $article2 = Article::create(['title' => 'Article 2', 'content' => 'Content 2']);
         $permission = Permission::create(['name' => 'edit-article']);
 
-        UserHasResourceAndPermission::create([
+        ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article1->id,
             'permission_id' => $permission->id,
         ]);
 
-        UserHasResourceAndPermission::create([
+        ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article2->id,
             'permission_id' => $permission->id,
         ]);
 
-        $results = UserHasResourceAndPermission::forResource($article1)->get();
+        $results = ModelHasResourceAndPermission::forResource($article1)->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals($article1->id, $results->first()->resource_id);
@@ -175,21 +175,21 @@ class UserHasResourceAndPermissionTest extends TestCase
         $permission1 = Permission::create(['name' => 'edit-article']);
         $permission2 = Permission::create(['name' => 'view-article']);
 
-        UserHasResourceAndPermission::create([
+        ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission1->id,
         ]);
 
-        UserHasResourceAndPermission::create([
+        ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'permission_id' => $permission2->id,
         ]);
 
-        $results = UserHasResourceAndPermission::forPermission('edit-article')->get();
+        $results = ModelHasResourceAndPermission::forPermission('edit-article')->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals($permission1->id, $results->first()->permission_id);
@@ -207,21 +207,21 @@ class UserHasResourceAndPermissionTest extends TestCase
         $role1 = Role::create(['name' => 'article-manager']);
         $role2 = Role::create(['name' => 'article-viewer']);
 
-        UserHasResourceAndPermission::create([
+        ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'role_id' => $role1->id,
         ]);
 
-        UserHasResourceAndPermission::create([
+        ModelHasResourceAndPermission::create([
             'user_id' => $user->id,
             'resource_type' => Article::class,
             'resource_id' => $article->id,
             'role_id' => $role2->id,
         ]);
 
-        $results = UserHasResourceAndPermission::forRole('article-manager')->get();
+        $results = ModelHasResourceAndPermission::forRole('article-manager')->get();
 
         $this->assertCount(1, $results);
         $this->assertEquals($role1->id, $results->first()->role_id);
