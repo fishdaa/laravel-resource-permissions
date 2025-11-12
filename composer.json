@@ -1,0 +1,49 @@
+{
+    "name": "fishdaa/laravel-resource-permissions",
+    "description": "Extend Spatie Laravel Permission with resource-based permissions and roles",
+    "keywords": [
+        "laravel",
+        "permissions",
+        "roles",
+        "spatie",
+        "resource-permissions",
+        "polymorphic-permissions"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fishdaa",
+            "email": "git@fishda.net"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "illuminate/support": "^10.0|^11.0",
+        "illuminate/contracts": "^10.0|^11.0",
+        "spatie/laravel-permission": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0|^9.0",
+        "phpunit/phpunit": "^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vendor\\LaravelResourcePermissions\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vendor\\LaravelResourcePermissions\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vendor\\LaravelResourcePermissions\\LaravelResourcePermissionsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
