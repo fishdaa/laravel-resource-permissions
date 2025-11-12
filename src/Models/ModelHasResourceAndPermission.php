@@ -122,6 +122,105 @@ class ModelHasResourceAndPermission extends Model
 
         return $query->where('role_id', $roleModel?->id);
     }
+
+    /**
+     * Scope a query to filter by permission name (joins with permissions table).
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $permissionName
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWherePermissionName($query, $permissionName)
+    {
+        $tableName = $this->getTable();
+
+        return $query->join('permissions', "{$tableName}.permission_id", '=', 'permissions.id')
+            ->where('permissions.name', $permissionName);
+    }
+
+    /**
+     * Scope a query to filter by role name (joins with roles table).
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $roleName
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereRoleName($query, $roleName)
+    {
+        $tableName = $this->getTable();
+
+        return $query->join('roles', "{$tableName}.role_id", '=', 'roles.id')
+            ->where('roles.name', $roleName);
+    }
+
+    /**
+     * Get a query builder scoped to a specific user and resource.
+     *
+     * @param  mixed  $user
+     * @param  mixed  $resource
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public static function forUserAndResource($user, $resource)
+    {
+        return static::query()
+            ->where('user_id', $user->id)
+            ->where('resource_type', get_class($resource))
+            ->where('resource_id', $resource->id);
+    }
+
+    /**
+     * Check if a user has a specific permission for a resource.
+     *
+     * @param  mixed  $user
+     * @param  mixed  $resource
+     * @param  string|\Spatie\Permission\Models\Permission  $permission
+     * @return bool
+     */
+    public static function hasResourcePermission($user, $resource, $permission)
+    {
+        $tableName = (new static)->getTable();
+
+        $query = static::query()
+            ->where("{$tableName}.user_id", $user->id)
+            ->where("{$tableName}.resource_type", get_class($resource))
+            ->where("{$tableName}.resource_id", $resource->id)
+            ->join('permissions', "{$tableName}.permission_id", '=', 'permissions.id');
+
+        if ($permission instanceof Permission) {
+            $query->where('permissions.id', $permission->id);
+        } else {
+            $query->where('permissions.name', $permission);
+        }
+
+        return $query->exists();
+    }
+
+    /**
+     * Check if a user has a specific role for a resource.
+     *
+     * @param  mixed  $user
+     * @param  mixed  $resource
+     * @param  string|\Spatie\Permission\Models\Role  $role
+     * @return bool
+     */
+    public static function hasResourceRole($user, $resource, $role)
+    {
+        $tableName = (new static)->getTable();
+
+        $query = static::query()
+            ->where("{$tableName}.user_id", $user->id)
+            ->where("{$tableName}.resource_type", get_class($resource))
+            ->where("{$tableName}.resource_id", $resource->id)
+            ->join('roles', "{$tableName}.role_id", '=', 'roles.id');
+
+        if ($role instanceof Role) {
+            $query->where('roles.id', $role->id);
+        } else {
+            $query->where('roles.name', $role);
+        }
+
+        return $query->exists();
+    }
 }
 
 // Backward compatibility aliases
