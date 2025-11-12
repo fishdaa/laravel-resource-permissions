@@ -7,6 +7,7 @@ This document provides a complete reference for all methods available in the `Ha
 - [Permission Methods](#permission-methods)
 - [Role Methods](#role-methods)
 - [Static Helper Methods](#static-helper-methods)
+- [Resource Methods](#resource-methods)
 - [Working with Spatie Permissions](#working-with-spatie-permissions)
 - [Method Chaining](#method-chaining)
 
@@ -417,6 +418,178 @@ ModelHasResourceAndPermission::forUserAndResource($user, $article)
     ->whereRoleName('article-editor')
     ->exists();
 ```
+
+## Resource Methods
+
+Resource models (like Article, Branch) can use the `HasAssignedUsers` trait to retrieve all users assigned to them.
+
+### Using HasAssignedUsers Trait
+
+Add the trait to your resource model:
+
+```php
+use Fishdaa\LaravelResourcePermissions\Traits\HasAssignedUsers;
+use Illuminate\Database\Eloquent\Model;
+
+class Article extends Model
+{
+    use HasAssignedUsers;
+    
+    // ... your model code
+}
+```
+
+### getAssignedUsers()
+
+Get all users assigned to this resource (with permissions or roles). Optionally filter to only specific users.
+
+```php
+$article->getAssignedUsers($users = null): Collection
+```
+
+**Parameters:**
+- `$users` (array|Collection|null): Optional array of user IDs or User model instances to filter
+
+**Returns:** `Collection` of User models
+
+**Example:**
+```php
+$article = Article::find(1);
+
+// Get all users assigned to this article
+$users = $article->getAssignedUsers();
+
+// Get only specific users that are assigned
+$specificUsers = $article->getAssignedUsers([$user1, $user2, $user3]);
+// Or with IDs
+$specificUsers = $article->getAssignedUsers([1, 2, 3]);
+
+// Since User models have HasResourcePermissions trait, you can:
+foreach ($users as $user) {
+    // Get permissions for this user on this article
+    $permissions = $user->getPermissionsForResource($article);
+    
+    // Get roles for this user on this article
+    $roles = $user->getRolesForResource($article);
+    
+    // Check specific permissions
+    if ($user->hasPermissionForResource('edit-article', $article)) {
+        // User can edit this article
+    }
+}
+```
+
+### hasUserAssigned()
+
+Check if a specific user is assigned to this resource.
+
+```php
+$article->hasUserAssigned($user): bool
+```
+
+**Parameters:**
+- `$user` (Model|int): User model instance or user ID
+
+**Returns:** `bool`
+
+**Example:**
+```php
+if ($article->hasUserAssigned($user)) {
+    // User is assigned to this article
+}
+```
+
+### hasAllUsersAssigned()
+
+Check if all specified users are assigned to this resource.
+
+```php
+$article->hasAllUsersAssigned($users): bool
+```
+
+**Parameters:**
+- `$users` (array|Collection): Array of user IDs or User model instances
+
+**Returns:** `bool`
+
+**Example:**
+```php
+if ($article->hasAllUsersAssigned([$user1, $user2])) {
+    // Both users are assigned
+}
+```
+
+### hasAnyUserAssigned()
+
+Check if any of the specified users are assigned to this resource.
+
+```php
+$article->hasAnyUserAssigned($users): bool
+```
+
+**Parameters:**
+- `$users` (array|Collection): Array of user IDs or User model instances
+
+**Returns:** `bool`
+
+**Example:**
+```php
+if ($article->hasAnyUserAssigned([$user1, $user2])) {
+    // At least one user is assigned
+}
+```
+
+### getUsersForResource() (Static Method)
+
+You can also use the static method directly without the trait:
+
+```php
+ModelHasResourceAndPermission::getUsersForResource($resource, $users = null): Collection
+```
+
+**Parameters:**
+- `$resource` (Model): The resource model instance
+- `$users` (array|Collection|null): Optional array of user IDs or User model instances to filter
+
+**Returns:** `Collection` of User models
+
+**Example:**
+```php
+$article = Article::find(1);
+
+// Get all users assigned to this article
+$users = ModelHasResourceAndPermission::getUsersForResource($article);
+
+// Get only specific users
+$specificUsers = ModelHasResourceAndPermission::getUsersForResource($article, [$user1, $user2]);
+
+// Process users
+foreach ($users as $user) {
+    $permissions = $user->getPermissionsForResource($article);
+    $roles = $user->getRolesForResource($article);
+}
+```
+
+### isUserAssignedToResource() (Static Method)
+
+Check if a user is assigned to a resource using static method.
+
+```php
+ModelHasResourceAndPermission::isUserAssignedToResource($user, $resource): bool
+```
+
+**Parameters:**
+- `$user` (Model|int): User model instance or user ID
+- `$resource` (Model): The resource model instance
+
+**Returns:** `bool`
+
+**Example:**
+```php
+$isAssigned = ModelHasResourceAndPermission::isUserAssignedToResource($user, $article);
+```
+
+**Note:** The methods return distinct users - if a user has both permissions and roles for the resource, they will only appear once in the collection.
 
 ## Method Chaining
 

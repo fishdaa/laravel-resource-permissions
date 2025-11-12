@@ -221,6 +221,51 @@ class ModelHasResourceAndPermission extends Model
 
         return $query->exists();
     }
+
+    /**
+     * Check if a user is assigned to a resource (has any permission or role).
+     *
+     * @param  mixed  $user  User model instance or user ID
+     * @param  mixed  $resource
+     * @return bool
+     */
+    public static function isUserAssignedToResource($user, $resource): bool
+    {
+        $userId = is_object($user) ? $user->id : $user;
+        
+        return static::query()
+            ->where('user_id', $userId)
+            ->where('resource_type', get_class($resource))
+            ->where('resource_id', $resource->id)
+            ->exists();
+    }
+
+    /**
+     * Get all users assigned to a resource (with permissions or roles).
+     * Optionally filter to only specific users.
+     *
+     * @param  mixed  $resource
+     * @param  array|\Illuminate\Support\Collection|null  $users  Optional array of user IDs or User model instances to filter
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getUsersForResource($resource, $users = null)
+    {
+        $userModel = config('auth.providers.users.model', \App\Models\User::class);
+        
+        $query = static::forResource($resource)->distinct();
+        
+        if ($users !== null) {
+            $userIds = collect($users)->map(function ($user) {
+                return is_object($user) ? $user->id : $user;
+            })->toArray();
+            
+            $query->whereIn('user_id', $userIds);
+        }
+        
+        $userIds = $query->pluck('user_id');
+
+        return $userModel::whereIn('id', $userIds)->get();
+    }
 }
 
 // Backward compatibility aliases
