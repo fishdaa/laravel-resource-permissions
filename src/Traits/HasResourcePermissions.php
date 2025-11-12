@@ -2,7 +2,7 @@
 
 namespace Fishdaa\LaravelResourcePermissions\Traits;
 
-use Fishdaa\LaravelResourcePermissions\Models\UserHasResourceAndPermission;
+use Fishdaa\LaravelResourcePermissions\Models\ModelHasResourceAndPermission;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Spatie\Permission\Contracts\Permission as PermissionContract;
@@ -102,7 +102,7 @@ trait HasResourcePermissions
             return $this;
         }
 
-        UserHasResourceAndPermission::firstOrCreate([
+        ModelHasResourceAndPermission::firstOrCreate([
             'user_id' => $this->id,
             'resource_type' => get_class($resource),
             'resource_id' => $resource->id,
@@ -129,7 +129,7 @@ trait HasResourcePermissions
             return $this;
         }
 
-        UserHasResourceAndPermission::where('user_id', $this->id)
+        ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->where('permission_id', $permission->id)
@@ -152,7 +152,7 @@ trait HasResourcePermissions
         $permissionIds = $permissions->pluck('id')->toArray();
 
         // Get existing permission IDs for this resource
-        $existingPermissionIds = UserHasResourceAndPermission::where('user_id', $this->id)
+        $existingPermissionIds = ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('permission_id')
@@ -162,7 +162,7 @@ trait HasResourcePermissions
         // Remove permissions that are not in the new list
         $permissionsToRemove = array_diff($existingPermissionIds, $permissionIds);
         if (! empty($permissionsToRemove)) {
-            UserHasResourceAndPermission::where('user_id', $this->id)
+            ModelHasResourceAndPermission::where('user_id', $this->id)
                 ->where('resource_type', get_class($resource))
                 ->where('resource_id', $resource->id)
                 ->whereIn('permission_id', $permissionsToRemove)
@@ -172,7 +172,7 @@ trait HasResourcePermissions
         // Add new permissions
         foreach ($permissionIds as $permissionId) {
             if (! in_array($permissionId, $existingPermissionIds)) {
-                UserHasResourceAndPermission::firstOrCreate([
+                ModelHasResourceAndPermission::firstOrCreate([
                     'user_id' => $this->id,
                     'resource_type' => get_class($resource),
                     'resource_id' => $resource->id,
@@ -213,7 +213,7 @@ trait HasResourcePermissions
             return $this;
         }
 
-        UserHasResourceAndPermission::firstOrCreate([
+        ModelHasResourceAndPermission::firstOrCreate([
             'user_id' => $this->id,
             'resource_type' => get_class($resource),
             'resource_id' => $resource->id,
@@ -240,7 +240,7 @@ trait HasResourcePermissions
             return $this;
         }
 
-        UserHasResourceAndPermission::where('user_id', $this->id)
+        ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->where('role_id', $role->id)
@@ -263,7 +263,7 @@ trait HasResourcePermissions
         $roleIds = $roles->pluck('id')->toArray();
 
         // Get existing role IDs for this resource
-        $existingRoleIds = UserHasResourceAndPermission::where('user_id', $this->id)
+        $existingRoleIds = ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('role_id')
@@ -273,7 +273,7 @@ trait HasResourcePermissions
         // Remove roles that are not in the new list
         $rolesToRemove = array_diff($existingRoleIds, $roleIds);
         if (! empty($rolesToRemove)) {
-            UserHasResourceAndPermission::where('user_id', $this->id)
+            ModelHasResourceAndPermission::where('user_id', $this->id)
                 ->where('resource_type', get_class($resource))
                 ->where('resource_id', $resource->id)
                 ->whereIn('role_id', $rolesToRemove)
@@ -283,7 +283,7 @@ trait HasResourcePermissions
         // Add new roles
         foreach ($roleIds as $roleId) {
             if (! in_array($roleId, $existingRoleIds)) {
-                UserHasResourceAndPermission::firstOrCreate([
+                ModelHasResourceAndPermission::firstOrCreate([
                     'user_id' => $this->id,
                     'resource_type' => get_class($resource),
                     'resource_id' => $resource->id,
@@ -312,7 +312,7 @@ trait HasResourcePermissions
             return false;
         }
 
-        return UserHasResourceAndPermission::where('user_id', $this->id)
+        return ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->where('role_id', $role->id)
@@ -327,7 +327,7 @@ trait HasResourcePermissions
      */
     public function getRolesForResource($resource): Collection
     {
-        $roleIds = UserHasResourceAndPermission::where('user_id', $this->id)
+        $roleIds = ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('role_id')
@@ -344,7 +344,7 @@ trait HasResourcePermissions
      */
     protected function getResourcePermissions($resource): Collection
     {
-        $permissionIds = UserHasResourceAndPermission::where('user_id', $this->id)
+        $permissionIds = ModelHasResourceAndPermission::where('user_id', $this->id)
             ->where('resource_type', get_class($resource))
             ->where('resource_id', $resource->id)
             ->whereNotNull('permission_id')

@@ -115,7 +115,7 @@ if (!$article->id) {
 }
 
 // Check if already exists
-$exists = UserHasResourceAndPermission::where('user_id', $user->id)
+$exists = ModelHasResourceAndPermission::where('user_id', $user->id)
     ->where('resource_type', get_class($article))
     ->where('resource_id', $article->id)
     ->where('permission_id', $permission->id)
@@ -135,11 +135,11 @@ if ($exists) {
 **Solution:** The trait doesn't add relationships automatically. If you need relationships, add them to your User model:
 
 ```php
-use Fishdaa\LaravelResourcePermissions\Models\UserHasResourceAndPermission;
+use Fishdaa\LaravelResourcePermissions\Models\ModelHasResourceAndPermission;
 
 public function resourcePermissions()
 {
-    return $this->hasMany(UserHasResourceAndPermission::class);
+    return $this->hasMany(ModelHasResourceAndPermission::class);
 }
 ```
 
@@ -183,7 +183,7 @@ Or ensure your User model is in the correct namespace.
 4. **Batch checks**
    ```php
    // Instead of checking one by one
-   $permissionIds = UserHasResourceAndPermission::where('user_id', $user->id)
+   $permissionIds = ModelHasResourceAndPermission::where('user_id', $user->id)
        ->whereIn('resource_id', $articleIds)
        ->pluck('permission_id');
    ```
@@ -268,7 +268,7 @@ dd(DB::getQueryLog());
 Check the actual database records:
 
 ```php
-$records = UserHasResourceAndPermission::where('user_id', $user->id)
+$records = ModelHasResourceAndPermission::where('user_id', $user->id)
     ->forResource($article)
     ->get();
 

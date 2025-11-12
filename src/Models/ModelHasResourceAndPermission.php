@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class UserHasResourceAndPermission extends Model
+class ModelHasResourceAndPermission extends Model
 {
     /**
      * The table associated with the model.
@@ -124,9 +124,14 @@ class UserHasResourceAndPermission extends Model
     }
 }
 
-// Backward compatibility alias
+// Backward compatibility aliases
 class_alias(
-    UserHasResourceAndPermission::class,
+    ModelHasResourceAndPermission::class,
+    \Fishdaa\LaravelResourcePermissions\Models\UserHasResourceAndPermission::class
+);
+
+class_alias(
+    ModelHasResourceAndPermission::class,
     \Fishdaa\LaravelResourcePermissions\Models\UserResourcePermission::class
 );
 

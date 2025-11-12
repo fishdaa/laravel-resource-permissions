@@ -134,7 +134,7 @@ $user->givePermissionToResource('edit-document', $document, $admin->id);
 ```php
 // Get all users who can edit a document
 $document = Document::find(1);
-$users = UserHasResourceAndPermission::forResource($document)
+$users = ModelHasResourceAndPermission::forResource($document)
     ->forPermission('edit-document')
     ->with('user')
     ->get()
