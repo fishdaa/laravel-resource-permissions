@@ -43,9 +43,11 @@ trait HasAssignedUsers
             return is_object($user) ? $user->id : $user;
         })->toArray();
 
+        $userModel = config('auth.providers.users.model', \App\Models\User::class);
         $assignedUserIds = ModelHasResourceAndPermission::forResource($this)
+            ->where('model_type', $userModel)
             ->distinct()
-            ->pluck('user_id')
+            ->pluck('model_id')
             ->toArray();
 
         return count(array_intersect($userIds, $assignedUserIds)) === count($userIds);
@@ -63,8 +65,10 @@ trait HasAssignedUsers
             return is_object($user) ? $user->id : $user;
         })->toArray();
 
+        $userModel = config('auth.providers.users.model', \App\Models\User::class);
         return ModelHasResourceAndPermission::forResource($this)
-            ->whereIn('user_id', $userIds)
+            ->where('model_type', $userModel)
+            ->whereIn('model_id', $userIds)
             ->exists();
     }
 }

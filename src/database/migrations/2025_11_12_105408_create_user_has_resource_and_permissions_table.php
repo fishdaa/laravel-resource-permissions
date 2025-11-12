@@ -15,7 +15,8 @@ return new class extends Migration
         
         Schema::create($tableName, function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('model_type');
+            $table->unsignedBigInteger('model_id');
             $table->string('resource_type');
             $table->unsignedBigInteger('resource_id');
             $table->foreignId('permission_id')->nullable()->constrained('permissions')->onDelete('cascade');
@@ -24,12 +25,12 @@ return new class extends Migration
             $table->timestamps();
 
             // Unique constraints
-            $table->unique(['user_id', 'resource_type', 'resource_id', 'permission_id'], 'user_resource_permission_unique');
-            $table->unique(['user_id', 'resource_type', 'resource_id', 'role_id'], 'user_resource_role_unique');
+            $table->unique(['model_type', 'model_id', 'resource_type', 'resource_id', 'permission_id'], 'model_resource_permission_unique');
+            $table->unique(['model_type', 'model_id', 'resource_type', 'resource_id', 'role_id'], 'model_resource_role_unique');
 
             // Indexes for polymorphic queries
+            $table->index(['model_type', 'model_id']);
             $table->index(['resource_type', 'resource_id']);
-            $table->index('user_id');
             $table->index('permission_id');
             $table->index('role_id');
         });
