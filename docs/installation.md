@@ -28,7 +28,7 @@ This will copy the migration file to your `database/migrations` directory.
 
 ## Step 3: Run Migrations
 
-Run the migrations to create the `user_has_resource_and_permissions` table:
+Run the migrations to create the `model_has_resource_and_permissions` table (or `user_has_resource_and_permissions` if configured):
 
 ```bash
 php artisan migrate
@@ -76,7 +76,7 @@ To verify the installation, you can check:
 2. The table exists:
    ```bash
    php artisan tinker
-   >>> Schema::hasTable('user_has_resource_and_permissions')
+   >>> Schema::hasTable(config('resource-permissions.table_name', 'model_has_resource_and_permissions'))
    ```
 
 3. The trait is available:

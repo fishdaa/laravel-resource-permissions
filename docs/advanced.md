@@ -124,7 +124,7 @@ foreach ($users as $user) {
 }
 
 // Or use DB query for better performance
-DB::table('user_has_resource_and_permissions')->insert(
+DB::table(config('resource-permissions.table_name', 'model_has_resource_and_permissions'))->insert(
     collect([1, 2, 3])->map(function ($userId) use ($article) {
         return [
             'user_id' => $userId,

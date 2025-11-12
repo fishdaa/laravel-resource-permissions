@@ -15,7 +15,10 @@ class UserHasResourceAndPermission extends Model
      *
      * @var string
      */
-    protected $table = 'user_has_resource_and_permissions';
+    public function getTable()
+    {
+        return config('resource-permissions.table_name', 'model_has_resource_and_permissions');
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -120,4 +123,10 @@ class UserHasResourceAndPermission extends Model
         return $query->where('role_id', $roleModel?->id);
     }
 }
+
+// Backward compatibility alias
+class_alias(
+    UserHasResourceAndPermission::class,
+    \Fishdaa\LaravelResourcePermissions\Models\UserResourcePermission::class
+);
 

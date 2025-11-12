@@ -7,9 +7,12 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is the table name for storing resource-based permissions.
+    | Defaults to 'model_has_resource_and_permissions' to follow Spatie's
+    | naming convention. Change to 'user_has_resource_and_permissions' if
+    | you prefer user-specific naming.
     |
     */
-    'table_name' => 'user_has_resource_and_permissions',
+    'table_name' => 'model_has_resource_and_permissions',
 
     /*
     |--------------------------------------------------------------------------

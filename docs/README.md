@@ -27,5 +27,5 @@ Laravel Resource Permissions allows you to:
 - Check permissions and roles at the resource level
 - Maintain compatibility with Spatie's global permission system
 
-The package uses a separate `user_has_resource_and_permissions` table that references Spatie's `permissions` and `roles` tables, ensuring full integration with your existing Spatie setup.
+The package uses a separate `model_has_resource_and_permissions` table (configurable) that references Spatie's `permissions` and `roles` tables, ensuring full integration with your existing Spatie setup.
 
