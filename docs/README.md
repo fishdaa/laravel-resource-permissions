@@ -22,10 +22,19 @@ Welcome to the Laravel Resource Permissions documentation. This package extends 
 
 Laravel Resource Permissions allows you to:
 
-- Assign permissions to users for specific resources (polymorphic)
-- Assign roles to users for specific resources
+- Assign permissions to any model (User, Team, Role, etc.) for specific resources (polymorphic)
+- Assign roles to any model for specific resources
 - Check permissions and roles at the resource level
 - Maintain compatibility with Spatie's global permission system
+- Support polymorphic relationships for maximum flexibility
 
 The package uses a separate `model_has_resource_and_permissions` table (configurable) that references Spatie's `permissions` and `roles` tables, ensuring full integration with your existing Spatie setup.
+
+### Polymorphic Support
+
+The package uses polymorphic relationships, meaning any model can have resource permissions, not just users. This allows you to:
+
+- Assign permissions to Users, Teams, Organizations, or any other model
+- Use the same API for all model types
+- Maintain backward compatibility with user-specific methods
 
