@@ -19,28 +19,35 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/support": "^10.0|^11.0",
-        "illuminate/contracts": "^10.0|^11.0",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0|^12.0",
         "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^8.0|^9.0",
-        "phpunit/phpunit": "^10.0|^11.0"
+        "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^9.0|^10.0|^11.0"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "github-protocols": ["https"]
     },
     "autoload": {
         "psr-4": {
-            "Vendor\\LaravelResourcePermissions\\": "src/"
+            "Fishdaa\\LaravelResourcePermissions\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Vendor\\LaravelResourcePermissions\\Tests\\": "tests/"
+            "Fishdaa\\LaravelResourcePermissions\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Vendor\\LaravelResourcePermissions\\LaravelResourcePermissionsServiceProvider"
+                "Fishdaa\\LaravelResourcePermissions\\LaravelResourcePermissionsServiceProvider"
             ]
         }
     },
