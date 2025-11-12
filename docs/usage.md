@@ -4,12 +4,51 @@ This document provides a complete reference for all methods available in the `Ha
 
 ## Table of Contents
 
+- [Polymorphic Support](#polymorphic-support)
 - [Permission Methods](#permission-methods)
 - [Role Methods](#role-methods)
 - [Static Helper Methods](#static-helper-methods)
 - [Resource Methods](#resource-methods)
 - [Working with Spatie Permissions](#working-with-spatie-permissions)
 - [Method Chaining](#method-chaining)
+
+## Polymorphic Support
+
+The package supports polymorphic relationships, meaning **any model** can have resource permissions, not just users. This allows you to assign permissions to Users, Teams, Organizations, Roles, or any other Eloquent model.
+
+### Using with Any Model
+
+Any model can use the `HasResourcePermissions` trait:
+
+```php
+use Fishdaa\LaravelResourcePermissions\Traits\HasResourcePermissions;
+
+class User extends Model
+{
+    use HasResourcePermissions;
+}
+
+class Team extends Model
+{
+    use HasResourcePermissions;
+}
+
+class Organization extends Model
+{
+    use HasResourcePermissions;
+}
+```
+
+All models use the same API:
+
+```php
+// Works with any model
+$user->givePermissionToResource('edit-article', $article);
+$team->givePermissionToResource('edit-article', $article);
+$organization->givePermissionToResource('edit-article', $article);
+```
+
+The package automatically tracks which model type has the permission using `model_type` and `model_id` columns.
 
 ## Permission Methods
 
@@ -291,14 +330,14 @@ The `ModelHasResourceAndPermission` model provides static helper methods that si
 
 ### hasResourcePermission()
 
-Check if a user has a specific permission for a resource using a simple static method call.
+Check if a model has a specific permission for a resource using a simple static method call. Works with any model type (User, Team, Organization, etc.).
 
 ```php
-ModelHasResourceAndPermission::hasResourcePermission($user, $resource, $permission): bool
+ModelHasResourceAndPermission::hasResourcePermission($model, $resource, $permission): bool
 ```
 
 **Parameters:**
-- `$user` (Model): The user model instance
+- `$model` (Model): Any model instance (User, Team, Organization, etc.)
 - `$resource` (Model): The resource model instance
 - `$permission` (string|Permission): Permission name or Permission model instance
 
@@ -307,33 +346,39 @@ ModelHasResourceAndPermission::hasResourcePermission($user, $resource, $permissi
 **Example:**
 ```php
 $user = User::find(1);
+$team = Team::find(1);
 $article = Article::find(1);
+
+// Works with any model
+if (ModelHasResourceAndPermission::hasResourcePermission($user, $article, 'update-article')) {
+    // User has permission
+}
+
+if (ModelHasResourceAndPermission::hasResourcePermission($team, $article, 'update-article')) {
+    // Team has permission
+}
 
 // Instead of writing raw DB queries:
 // DB::table('model_has_resource_and_permissions')
-//     ->where('user_id', $user->id)
+//     ->where('model_type', get_class($model))
+//     ->where('model_id', $model->id)
 //     ->where('resource_type', Article::class)
 //     ->where('resource_id', $article->id)
 //     ->join('permissions', 'model_has_resource_and_permissions.permission_id', '=', 'permissions.id')
 //     ->where('permissions.name', 'update-article')
 //     ->exists();
-
-// You can simply use:
-if (ModelHasResourceAndPermission::hasResourcePermission($user, $article, 'update-article')) {
-    // User has permission
-}
 ```
 
 ### hasResourceRole()
 
-Check if a user has a specific role for a resource using a simple static method call.
+Check if a model has a specific role for a resource using a simple static method call. Works with any model type.
 
 ```php
-ModelHasResourceAndPermission::hasResourceRole($user, $resource, $role): bool
+ModelHasResourceAndPermission::hasResourceRole($model, $resource, $role): bool
 ```
 
 **Parameters:**
-- `$user` (Model): The user model instance
+- `$model` (Model): Any model instance (User, Team, Organization, etc.)
 - `$resource` (Model): The resource model instance
 - `$role` (string|Role): Role name or Role model instance
 
@@ -344,39 +389,56 @@ ModelHasResourceAndPermission::hasResourceRole($user, $resource, $role): bool
 if (ModelHasResourceAndPermission::hasResourceRole($user, $article, 'article-editor')) {
     // User has the role
 }
+
+if (ModelHasResourceAndPermission::hasResourceRole($team, $article, 'article-editor')) {
+    // Team has the role
+}
 ```
 
-### forUserAndResource()
+### forModelAndResource()
 
-Get a query builder scoped to a specific user and resource. This is useful for building custom queries.
+Get a query builder scoped to a specific model and resource. This is useful for building custom queries. Works with any model type.
 
 ```php
-ModelHasResourceAndPermission::forUserAndResource($user, $resource): Builder
+ModelHasResourceAndPermission::forModelAndResource($model, $resource): Builder
 ```
 
 **Parameters:**
-- `$user` (Model): The user model instance
+- `$model` (Model): Any model instance (User, Team, Organization, etc.)
 - `$resource` (Model): The resource model instance
 
 **Returns:** `\Illuminate\Database\Eloquent\Builder`
 
 **Example:**
 ```php
-// Get all permissions for user and resource
-$permissions = ModelHasResourceAndPermission::forUserAndResource($user, $article)
+// Get all permissions for model and resource
+$permissions = ModelHasResourceAndPermission::forModelAndResource($user, $article)
     ->whereNotNull('permission_id')
     ->with('permission')
     ->get();
 
+// Works with any model type
+$teamPermissions = ModelHasResourceAndPermission::forModelAndResource($team, $article)
+    ->whereNotNull('permission_id')
+    ->get();
+
 // Check for specific permission using scope
-$hasPermission = ModelHasResourceAndPermission::forUserAndResource($user, $article)
+$hasPermission = ModelHasResourceAndPermission::forModelAndResource($user, $article)
     ->wherePermissionName('update-article')
     ->exists();
 
 // Check for specific role using scope
-$hasRole = ModelHasResourceAndPermission::forUserAndResource($user, $article)
+$hasRole = ModelHasResourceAndPermission::forModelAndResource($user, $article)
     ->whereRoleName('article-editor')
     ->exists();
+```
+
+### forUserAndResource() (Deprecated)
+
+**Deprecated:** Use `forModelAndResource()` instead. This method is kept for backward compatibility.
+
+```php
+ModelHasResourceAndPermission::forUserAndResource($user, $resource): Builder
 ```
 
 ### wherePermissionName()
@@ -539,57 +601,77 @@ if ($article->hasAnyUserAssigned([$user1, $user2])) {
 }
 ```
 
-### getUsersForResource() (Static Method)
+### getModelsForResource() (Static Method)
 
-You can also use the static method directly without the trait:
+Get all models assigned to a resource (with permissions or roles). Works with any model type. Optionally filter to only specific models.
 
 ```php
-ModelHasResourceAndPermission::getUsersForResource($resource, $users = null): Collection
+ModelHasResourceAndPermission::getModelsForResource($resource, $models = null): Collection
 ```
 
 **Parameters:**
 - `$resource` (Model): The resource model instance
-- `$users` (array|Collection|null): Optional array of user IDs or User model instances to filter
+- `$models` (array|Collection|null): Optional array of model instances to filter
 
-**Returns:** `Collection` of User models
+**Returns:** `Collection` of model instances (mixed types)
 
 **Example:**
 ```php
 $article = Article::find(1);
 
-// Get all users assigned to this article
-$users = ModelHasResourceAndPermission::getUsersForResource($article);
+// Get all models assigned to this article (Users, Teams, etc.)
+$models = ModelHasResourceAndPermission::getModelsForResource($article);
 
-// Get only specific users
-$specificUsers = ModelHasResourceAndPermission::getUsersForResource($article, [$user1, $user2]);
+// Get only specific models
+$specificModels = ModelHasResourceAndPermission::getModelsForResource($article, [$user1, $team1]);
 
-// Process users
-foreach ($users as $user) {
-    $permissions = $user->getPermissionsForResource($article);
-    $roles = $user->getRolesForResource($article);
+// Process models
+foreach ($models as $model) {
+    if ($model instanceof User) {
+        $permissions = $model->getPermissionsForResource($article);
+    }
 }
 ```
 
-### isUserAssignedToResource() (Static Method)
+### getUsersForResource() (Deprecated)
 
-Check if a user is assigned to a resource using static method.
+**Deprecated:** Use `getModelsForResource()` instead. This method is kept for backward compatibility and only returns User models.
 
 ```php
-ModelHasResourceAndPermission::isUserAssignedToResource($user, $resource): bool
+ModelHasResourceAndPermission::getUsersForResource($resource, $users = null): Collection
+```
+
+**Returns:** `Collection` of User models only
+
+### isModelAssignedToResource() (Static Method)
+
+Check if a model is assigned to a resource using static method. Works with any model type.
+
+```php
+ModelHasResourceAndPermission::isModelAssignedToResource($model, $resource): bool
 ```
 
 **Parameters:**
-- `$user` (Model|int): User model instance or user ID
+- `$model` (Model): Any model instance (User, Team, Organization, etc.)
 - `$resource` (Model): The resource model instance
 
 **Returns:** `bool`
 
 **Example:**
 ```php
-$isAssigned = ModelHasResourceAndPermission::isUserAssignedToResource($user, $article);
+$isAssigned = ModelHasResourceAndPermission::isModelAssignedToResource($user, $article);
+$isTeamAssigned = ModelHasResourceAndPermission::isModelAssignedToResource($team, $article);
 ```
 
-**Note:** The methods return distinct users - if a user has both permissions and roles for the resource, they will only appear once in the collection.
+### isUserAssignedToResource() (Deprecated)
+
+**Deprecated:** Use `isModelAssignedToResource()` instead. This method is kept for backward compatibility.
+
+```php
+ModelHasResourceAndPermission::isUserAssignedToResource($user, $resource): bool
+```
+
+**Note:** The methods return distinct models - if a model has both permissions and roles for the resource, they will only appear once in the collection.
 
 ## Method Chaining
 

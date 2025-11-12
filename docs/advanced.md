@@ -10,12 +10,18 @@ You can create custom scopes on the `ModelHasResourceAndPermission` model:
 use Fishdaa\LaravelResourcePermissions\Models\ModelHasResourceAndPermission;
 
 // In a service provider or helper
-ModelHasResourceAndPermission::macro('forUser', function ($user) {
-    return $this->where('user_id', $user->id);
+ModelHasResourceAndPermission::macro('forModel', function ($model) {
+    return $this->where('model_type', get_class($model))
+        ->where('model_id', $model->id);
 });
 
 // Usage
-$permissions = ModelHasResourceAndPermission::forUser($user)
+$permissions = ModelHasResourceAndPermission::forModel($user)
+    ->forResource($article)
+    ->get();
+
+// Works with any model type
+$teamPermissions = ModelHasResourceAndPermission::forModel($team)
     ->forResource($article)
     ->get();
 ```
@@ -25,13 +31,14 @@ $permissions = ModelHasResourceAndPermission::forUser($user)
 When querying multiple resources, use eager loading:
 
 ```php
-// Get all permissions for multiple articlees
-$articlees = Article::with(['resourcePermissions' => function ($query) {
-    $query->where('user_id', auth()->id());
+// Get all permissions for multiple articles
+$articles = Article::with(['resourcePermissions' => function ($query) {
+    $query->where('model_type', get_class(auth()->user()))
+        ->where('model_id', auth()->id());
 }])->get();
 
 // Check permissions efficiently
-foreach ($articlees as $article) {
+foreach ($articles as $article) {
     $hasPermission = $article->resourcePermissions->isNotEmpty();
 }
 ```
@@ -77,12 +84,12 @@ use Illuminate\Support\Facades\Event;
 
 Event::listen('eloquent.created: ' . ModelHasResourceAndPermission::class, function ($model) {
     // Permission was assigned
-    Log::info("Permission assigned: User {$model->user_id} to resource {$model->resource_type}:{$model->resource_id}");
+    Log::info("Permission assigned: {$model->model_type} {$model->model_id} to resource {$model->resource_type}:{$model->resource_id}");
 });
 
 Event::listen('eloquent.deleted: ' . ModelHasResourceAndPermission::class, function ($model) {
     // Permission was revoked
-    Log::info("Permission revoked: User {$model->user_id} from resource {$model->resource_type}:{$model->resource_id}");
+    Log::info("Permission revoked: {$model->model_type} {$model->model_id} from resource {$model->resource_type}:{$model->resource_id}");
 });
 ```
 
@@ -99,8 +106,8 @@ trait CustomHasResourcePermissions
     
     public function hasPermissionForResource($permission, $resource): bool
     {
-        // Check if user is resource owner
-        if (method_exists($resource, 'user_id') && $resource->user_id === $this->id) {
+        // Check if model is resource owner (example: if resource has owner relationship)
+        if (method_exists($resource, 'owner') && $resource->owner && $resource->owner->id === $this->id) {
             return true; // Owners always have permission
         }
         
@@ -124,10 +131,12 @@ foreach ($users as $user) {
 }
 
 // Or use DB query for better performance
+$userModel = \App\Models\User::class;
 DB::table(config('resource-permissions.table_name', 'model_has_resource_and_permissions'))->insert(
-    collect([1, 2, 3])->map(function ($userId) use ($article) {
+    collect([1, 2, 3])->map(function ($userId) use ($article, $userModel) {
         return [
-            'user_id' => $userId,
+            'model_type' => $userModel,
+            'model_id' => $userId,
             'resource_type' => get_class($article),
             'resource_id' => $article->id,
             'permission_id' => Permission::where('name', 'view-article')->first()->id,
@@ -165,7 +174,8 @@ Track who assigned permissions and when:
 
 ```php
 // The created_by field is automatically tracked
-        $permission = ModelHasResourceAndPermission::where('user_id', $user->id)
+$permission = ModelHasResourceAndPermission::where('model_type', get_class($user))
+    ->where('model_id', $user->id)
     ->forResource($article)
     ->first();
 
@@ -214,7 +224,8 @@ trait HasResourcePermissionsTestHelpers
 5. **Query Optimization**: Use `select()` to limit columns when you don't need all data:
 
 ```php
-        $permissionIds = ModelHasResourceAndPermission::where('user_id', $user->id)
+$permissionIds = ModelHasResourceAndPermission::where('model_type', get_class($user))
+    ->where('model_id', $user->id)
     ->forResource($article)
     ->select('permission_id')
     ->pluck('permission_id');

@@ -115,7 +115,8 @@ if (!$article->id) {
 }
 
 // Check if already exists
-$exists = ModelHasResourceAndPermission::where('user_id', $user->id)
+$exists = ModelHasResourceAndPermission::where('model_type', get_class($user))
+    ->where('model_id', $user->id)
     ->where('resource_type', get_class($article))
     ->where('resource_id', $article->id)
     ->where('permission_id', $permission->id)
@@ -166,8 +167,9 @@ Or ensure your User model is in the correct namespace.
 
 1. **Use eager loading**
    ```php
-   $articlees = Article::with(['resourcePermissions' => function ($query) use ($user) {
-       $query->where('user_id', $user->id);
+   $articles = Article::with(['resourcePermissions' => function ($query) use ($user) {
+       $query->where('model_type', get_class($user))
+           ->where('model_id', $user->id);
    }])->get();
    ```
 
@@ -183,7 +185,8 @@ Or ensure your User model is in the correct namespace.
 4. **Batch checks**
    ```php
    // Instead of checking one by one
-   $permissionIds = ModelHasResourceAndPermission::where('user_id', $user->id)
+   $permissionIds = ModelHasResourceAndPermission::where('model_type', get_class($user))
+       ->where('model_id', $user->id)
        ->whereIn('resource_id', $articleIds)
        ->pluck('permission_id');
    ```
@@ -268,7 +271,8 @@ dd(DB::getQueryLog());
 Check the actual database records:
 
 ```php
-$records = ModelHasResourceAndPermission::where('user_id', $user->id)
+$records = ModelHasResourceAndPermission::where('model_type', get_class($user))
+    ->where('model_id', $user->id)
     ->forResource($article)
     ->get();
 
