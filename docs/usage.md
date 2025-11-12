@@ -6,8 +6,9 @@ This document provides a complete reference for all methods available in the `Ha
 
 - [Permission Methods](#permission-methods)
 - [Role Methods](#role-methods)
-- [Helper Methods](#helper-methods)
-- [Examples](#examples)
+- [Static Helper Methods](#static-helper-methods)
+- [Working with Spatie Permissions](#working-with-spatie-permissions)
+- [Method Chaining](#method-chaining)
 
 ## Permission Methods
 
@@ -281,6 +282,140 @@ if ($user->hasPermissionTo('edit-article') ||
     $user->hasPermissionForResource('edit-article', $article)) {
     // User can edit
 }
+```
+
+## Static Helper Methods
+
+The `ModelHasResourceAndPermission` model provides static helper methods that simplify common permission and role checking patterns without needing to write raw database queries.
+
+### hasResourcePermission()
+
+Check if a user has a specific permission for a resource using a simple static method call.
+
+```php
+ModelHasResourceAndPermission::hasResourcePermission($user, $resource, $permission): bool
+```
+
+**Parameters:**
+- `$user` (Model): The user model instance
+- `$resource` (Model): The resource model instance
+- `$permission` (string|Permission): Permission name or Permission model instance
+
+**Returns:** `bool`
+
+**Example:**
+```php
+$user = User::find(1);
+$article = Article::find(1);
+
+// Instead of writing raw DB queries:
+// DB::table('model_has_resource_and_permissions')
+//     ->where('user_id', $user->id)
+//     ->where('resource_type', Article::class)
+//     ->where('resource_id', $article->id)
+//     ->join('permissions', 'model_has_resource_and_permissions.permission_id', '=', 'permissions.id')
+//     ->where('permissions.name', 'update-article')
+//     ->exists();
+
+// You can simply use:
+if (ModelHasResourceAndPermission::hasResourcePermission($user, $article, 'update-article')) {
+    // User has permission
+}
+```
+
+### hasResourceRole()
+
+Check if a user has a specific role for a resource using a simple static method call.
+
+```php
+ModelHasResourceAndPermission::hasResourceRole($user, $resource, $role): bool
+```
+
+**Parameters:**
+- `$user` (Model): The user model instance
+- `$resource` (Model): The resource model instance
+- `$role` (string|Role): Role name or Role model instance
+
+**Returns:** `bool`
+
+**Example:**
+```php
+if (ModelHasResourceAndPermission::hasResourceRole($user, $article, 'article-editor')) {
+    // User has the role
+}
+```
+
+### forUserAndResource()
+
+Get a query builder scoped to a specific user and resource. This is useful for building custom queries.
+
+```php
+ModelHasResourceAndPermission::forUserAndResource($user, $resource): Builder
+```
+
+**Parameters:**
+- `$user` (Model): The user model instance
+- `$resource` (Model): The resource model instance
+
+**Returns:** `\Illuminate\Database\Eloquent\Builder`
+
+**Example:**
+```php
+// Get all permissions for user and resource
+$permissions = ModelHasResourceAndPermission::forUserAndResource($user, $article)
+    ->whereNotNull('permission_id')
+    ->with('permission')
+    ->get();
+
+// Check for specific permission using scope
+$hasPermission = ModelHasResourceAndPermission::forUserAndResource($user, $article)
+    ->wherePermissionName('update-article')
+    ->exists();
+
+// Check for specific role using scope
+$hasRole = ModelHasResourceAndPermission::forUserAndResource($user, $article)
+    ->whereRoleName('article-editor')
+    ->exists();
+```
+
+### wherePermissionName()
+
+Scope to filter by permission name (automatically joins with permissions table).
+
+```php
+$query->wherePermissionName($permissionName): Builder
+```
+
+**Parameters:**
+- `$permissionName` (string): Permission name
+
+**Returns:** `\Illuminate\Database\Eloquent\Builder`
+
+**Example:**
+```php
+ModelHasResourceAndPermission::forUserAndResource($user, $article)
+    ->wherePermissionName('update-article')
+    ->exists();
+```
+
+### whereRoleName()
+
+Scope to filter by role name (automatically joins with roles table).
+
+```php
+$query->whereRoleName($roleName): Builder
+```
+
+**Parameters:**
+- `$roleName` (string): Role name
+
+**Returns:** `\Illuminate\Database\Eloquent\Builder`
+
+**Example:**
+```php
+ModelHasResourceAndPermission::forUserAndResource($user, $article)
+    ->whereRoleName('article-editor')
+    ->exists();
 ```
 
 ## Method Chaining
