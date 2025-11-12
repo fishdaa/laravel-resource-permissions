@@ -45,7 +45,7 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->givePermissionToResource('edit-article', $this->article);
 
         $this->assertTrue($this->user->hasPermissionForResource('edit-article', $this->article));
-        $this->assertDatabaseHas('user_has_resource_and_permissions', [
+        $this->assertDatabaseHas(config('resource-permissions.table_name', 'model_has_resource_and_permissions'), [
             'user_id' => $this->user->id,
             'resource_type' => Article::class,
             'resource_id' => $this->article->id,
@@ -70,7 +70,7 @@ class HasResourcePermissionsTest extends TestCase
 
         $this->user->givePermissionToResource('edit-article', $this->article, $creator->id);
 
-        $this->assertDatabaseHas('user_has_resource_and_permissions', [
+        $this->assertDatabaseHas(config('resource-permissions.table_name', 'model_has_resource_and_permissions'), [
             'user_id' => $this->user->id,
             'created_by' => $creator->id,
         ]);
@@ -143,7 +143,7 @@ class HasResourcePermissionsTest extends TestCase
         $this->user->assignRoleToResource('article-editor', $this->article);
 
         $this->assertTrue($this->user->hasRoleForResource('article-editor', $this->article));
-        $this->assertDatabaseHas('user_has_resource_and_permissions', [
+        $this->assertDatabaseHas(config('resource-permissions.table_name', 'model_has_resource_and_permissions'), [
             'user_id' => $this->user->id,
             'resource_type' => Article::class,
             'resource_id' => $this->article->id,

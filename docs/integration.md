@@ -11,7 +11,7 @@ Laravel Resource Permissions extends Spatie's permission system by adding resour
 ### Separate Tables
 
 - **Spatie Tables**: `permissions`, `roles`, `model_has_permissions`, `model_has_roles`
-- **Resource Permissions Table**: `user_has_resource_and_permissions`
+- **Resource Permissions Table**: `model_has_resource_and_permissions` (configurable, defaults to follow Spatie's naming convention)
 
 The resource permissions table references Spatie's `permissions` and `roles` tables via foreign keys, ensuring consistency.
 

@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_has_resource_and_permissions', function (Blueprint $table) {
+        $tableName = config('resource-permissions.table_name', 'model_has_resource_and_permissions');
+        
+        Schema::create($tableName, function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('resource_type');
@@ -38,7 +40,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_has_resource_and_permissions');
+        $tableName = config('resource-permissions.table_name', 'model_has_resource_and_permissions');
+        Schema::dropIfExists($tableName);
     }
 };
 

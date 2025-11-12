@@ -17,10 +17,19 @@ This creates `config/resource-permissions.php` in your application.
 ### Table Name
 
 ```php
-'table_name' => 'user_has_resource_and_permissions',
+'table_name' => 'model_has_resource_and_permissions', // or 'user_has_resource_and_permissions' if preferred
 ```
 
-The name of the database table used to store resource permissions. Change this if you need a different table name.
+The name of the database table used to store resource permissions. 
+
+**Default:** `model_has_resource_and_permissions` (follows Spatie's naming convention with `model_has_permissions`)
+
+**Alternative:** Change to `user_has_resource_and_permissions` if you prefer user-specific naming.
+
+**Important:** If you change this after running migrations, you'll need to:
+1. Update the config file before running migrations
+2. Or manually rename the table in your database
+3. The model will automatically use the configured table name
 
 ### User Model
 
