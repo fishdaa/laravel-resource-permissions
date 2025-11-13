@@ -4,6 +4,8 @@ Welcome to the Laravel Resource Permissions documentation. This package extends 
 
 ## Getting Started
 
+- **[Introduction](introduction.md)** - What is resource permissions? Explained with real-world examples
+
 - **[Installation Guide](installation.md)** - How to install and set up the package
 - **[Configuration](configuration.md)** - Configuration options and customization
 
