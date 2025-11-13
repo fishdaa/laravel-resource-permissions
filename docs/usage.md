@@ -435,7 +435,7 @@ $hasRole = ModelHasResourceAndPermission::forModelAndResource($user, $article)
 
 ### forUserAndResource() (Deprecated)
 
-**Deprecated:** Use `forModelAndResource()` instead. This method is kept for backward compatibility.
+**Deprecated:** Use `forModelAndResource()` instead. This method is kept for backward compatibility. **Will be removed in 0.3.0.**
 
 ```php
 ModelHasResourceAndPermission::forUserAndResource($user, $resource): Builder
@@ -635,7 +635,7 @@ foreach ($models as $model) {
 
 ### getUsersForResource() (Deprecated)
 
-**Deprecated:** Use `getModelsForResource()` instead. This method is kept for backward compatibility and only returns User models.
+**Deprecated:** Use `getModelsForResource()` instead. This method is kept for backward compatibility and only returns User models. **Will be removed in 0.3.0.**
 
 ```php
 ModelHasResourceAndPermission::getUsersForResource($resource, $users = null): Collection
@@ -665,7 +665,7 @@ $isTeamAssigned = ModelHasResourceAndPermission::isModelAssignedToResource($team
 
 ### isUserAssignedToResource() (Deprecated)
 
-**Deprecated:** Use `isModelAssignedToResource()` instead. This method is kept for backward compatibility.
+**Deprecated:** Use `isModelAssignedToResource()` instead. This method is kept for backward compatibility. **Will be removed in 0.3.0.**
 
 ```php
 ModelHasResourceAndPermission::isUserAssignedToResource($user, $resource): bool

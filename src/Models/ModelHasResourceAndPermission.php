@@ -46,7 +46,7 @@ class ModelHasResourceAndPermission extends Model
     /**
      * Get the model that owns the resource permission (backward compatibility for User model).
      * 
-     * @deprecated Use model() instead. This method is kept for backward compatibility.
+     * @deprecated Use model() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
      */
     public function user(): BelongsTo
     {
@@ -196,7 +196,7 @@ class ModelHasResourceAndPermission extends Model
     /**
      * Get a query builder scoped to a specific model and resource (backward compatibility for User model).
      *
-     * @deprecated Use forModelAndResource() instead. This method is kept for backward compatibility.
+     * @deprecated Use forModelAndResource() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
      * @param  mixed  $user  Model instance (typically User)
      * @param  mixed  $resource
      * @return \Illuminate\Database\Eloquent\Builder
@@ -282,7 +282,7 @@ class ModelHasResourceAndPermission extends Model
     /**
      * Check if a model is assigned to a resource (backward compatibility for User model).
      *
-     * @deprecated Use isModelAssignedToResource() instead. This method is kept for backward compatibility.
+     * @deprecated Use isModelAssignedToResource() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
      * @param  mixed  $user  Model instance (typically User) or model ID
      * @param  mixed  $resource
      * @return bool
@@ -349,7 +349,7 @@ class ModelHasResourceAndPermission extends Model
      * Get all models assigned to a resource (backward compatibility for User model).
      * Optionally filter to only specific models.
      *
-     * @deprecated Use getModelsForResource() instead. This method is kept for backward compatibility.
+     * @deprecated Use getModelsForResource() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
      * @param  mixed  $resource
      * @param  array|\Illuminate\Support\Collection|null  $users  Optional array of model IDs or User model instances to filter
      * @return \Illuminate\Database\Eloquent\Collection
