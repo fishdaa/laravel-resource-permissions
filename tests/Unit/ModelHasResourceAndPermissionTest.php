@@ -33,8 +33,8 @@ class ModelHasResourceAndPermissionTest extends TestCase
             'permission_id' => $permission->id,
         ]);
 
-        $this->assertInstanceOf(User::class, $resourcePermission->user);
-        $this->assertEquals($user->id, $resourcePermission->user->id);
+        $this->assertInstanceOf(User::class, $resourcePermission->model);
+        $this->assertEquals($user->id, $resourcePermission->model->id);
     }
 
     public function test_resource_relationship(): void

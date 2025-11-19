@@ -504,7 +504,7 @@ Managing permissions for physical locations or branches.
 ```php
 class Branch extends Model
 {
-    use HasAssignedUsers;
+    use HasAssignedModels;
     
     // Branch can have assigned users
 }

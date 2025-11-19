@@ -483,19 +483,19 @@ ModelHasResourceAndPermission::forUserAndResource($user, $article)
 
 ## Resource Methods
 
-Resource models (like Article, Branch) can use the `HasAssignedUsers` trait to retrieve all users assigned to them.
+Resource models (like Article, Branch) can use the `HasAssignedModels` trait to retrieve all users assigned to them.
 
-### Using HasAssignedUsers Trait
+### Using HasAssignedModels Trait
 
 Add the trait to your resource model:
 
 ```php
-use Fishdaa\LaravelResourcePermissions\Traits\HasAssignedUsers;
+use Fishdaa\LaravelResourcePermissions\Traits\HasAssignedModels;
 use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
-    use HasAssignedUsers;
+    use HasAssignedModels;
     
     // ... your model code
 }

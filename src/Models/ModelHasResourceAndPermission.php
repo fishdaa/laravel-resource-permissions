@@ -44,16 +44,6 @@ class ModelHasResourceAndPermission extends Model
     }
 
     /**
-     * Get the model that owns the resource permission (backward compatibility for User model).
-     * 
-     * @deprecated Use model() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(config('auth.providers.users.model', \App\Models\User::class), 'model_id');
-    }
-
-    /**
      * Get the resource that the permission is for.
      */
     public function resource(): MorphTo
@@ -194,19 +184,6 @@ class ModelHasResourceAndPermission extends Model
     }
 
     /**
-     * Get a query builder scoped to a specific model and resource (backward compatibility for User model).
-     *
-     * @deprecated Use forModelAndResource() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
-     * @param  mixed  $user  Model instance (typically User)
-     * @param  mixed  $resource
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function forUserAndResource($user, $resource)
-    {
-        return static::forModelAndResource($user, $resource);
-    }
-
-    /**
      * Check if a model has a specific permission for a resource.
      *
      * @param  mixed  $model
@@ -280,38 +257,12 @@ class ModelHasResourceAndPermission extends Model
     }
 
     /**
-     * Check if a model is assigned to a resource (backward compatibility for User model).
-     *
-     * @deprecated Use isModelAssignedToResource() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
-     * @param  mixed  $user  Model instance (typically User) or model ID
-     * @param  mixed  $resource
-     * @return bool
-     */
-    public static function isUserAssignedToResource($user, $resource): bool
-    {
-        $userModel = config('auth.providers.users.model', \App\Models\User::class);
-        
-        // Handle both model ID and model object
-        if (is_object($user)) {
-            return static::isModelAssignedToResource($user, $resource);
-        }
-        
-        // Handle model ID
-        return static::query()
-            ->where('model_type', $userModel)
-            ->where('model_id', $user)
-            ->where('resource_type', get_class($resource))
-            ->where('resource_id', $resource->id)
-            ->exists();
-    }
-
-    /**
      * Get all models assigned to a resource (with permissions or roles).
      * Optionally filter to only specific models.
      *
      * @param  mixed  $resource
      * @param  array|\Illuminate\Support\Collection|null  $models  Optional array of model instances to filter
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Support\Collection
      */
     public static function getModelsForResource($resource, $models = null)
     {
@@ -345,45 +296,4 @@ class ModelHasResourceAndPermission extends Model
         return $results;
     }
 
-    /**
-     * Get all models assigned to a resource (backward compatibility for User model).
-     * Optionally filter to only specific models.
-     *
-     * @deprecated Use getModelsForResource() instead. This method is kept for backward compatibility. Will be removed in 0.3.0.
-     * @param  mixed  $resource
-     * @param  array|\Illuminate\Support\Collection|null  $users  Optional array of model IDs or User model instances to filter
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public static function getUsersForResource($resource, $users = null)
-    {
-        $userModel = config('auth.providers.users.model', \App\Models\User::class);
-        
-        $query = static::forResource($resource)
-            ->where('model_type', $userModel)
-            ->distinct();
-        
-        if ($users !== null) {
-            $userIds = collect($users)->map(function ($user) {
-                return is_object($user) ? $user->id : $user;
-            })->toArray();
-            
-            $query->whereIn('model_id', $userIds);
-        }
-        
-        $userIds = $query->pluck('model_id');
-
-        return $userModel::whereIn('id', $userIds)->get();
-    }
 }
-
-// Backward compatibility aliases
-class_alias(
-    ModelHasResourceAndPermission::class,
-    \Fishdaa\LaravelResourcePermissions\Models\UserHasResourceAndPermission::class
-);
-
-class_alias(
-    ModelHasResourceAndPermission::class,
-    \Fishdaa\LaravelResourcePermissions\Models\UserResourcePermission::class
-);
-
