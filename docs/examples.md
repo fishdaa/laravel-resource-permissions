@@ -542,14 +542,14 @@ $employee->givePermissionToResource('view-branch', $suburbanBranch);
 ```php
 $branch = Branch::find(1);
 
-// Get all users assigned to this branch
-$assignedUsers = $branch->getAssignedUsers();
+// Get all models assigned to this branch
+$assignedModels = $branch->getAssignedModels();
 
-// Get only specific users if they're assigned
-$specificUsers = $branch->getAssignedUsers([$user1, $user2]);
+// Get only specific models if they're assigned
+$specificModels = $branch->getAssignedModels([$user1, $user2]);
 
 // Check if user is assigned
-if ($branch->hasUserAssigned($user)) {
+if ($branch->hasModelAssigned($user)) {
     // User has access to this branch
 }
 ```
