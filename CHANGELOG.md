@@ -1,6 +1,11 @@
 # Changelog
 
-All notable changes to `laravel-resource-permissions` will be documented in this file.
+All notable changes to this project will be documented in this file.
+
+## [0.3.1] - 2025-11-19
+
+### Fixed
+- Fixed MySQL error caused by auto-generated index names exceeding 64-character limit in migration
 
 ## [0.3.0] - 2025-11-19
 
