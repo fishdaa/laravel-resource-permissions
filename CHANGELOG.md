@@ -7,6 +7,19 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fixed MySQL error caused by auto-generated index names exceeding 64-character limit in migration
 
+## [0.3.2] - 2025-11-19
+
+### Added
+- GitHub Actions workflow for automated testing across multiple databases (MySQL, PostgreSQL, SQLite)
+- Migration test suite to verify table structure, indexes, and constraints
+- Multi-database testing for PHP 8.0-8.3
+- **Performance testing suite:**
+  - Lightweight CI tests (100-10K records) to catch performance regressions
+  - Comprehensive benchmark tests (up to 1M records) for local profiling
+  - Query analysis and index verification
+  - Memory usage tracking
+  - Performance documentation (`docs/performance.md`)
+
 ## [0.3.0] - 2025-11-19
 
 ### Breaking Changes
