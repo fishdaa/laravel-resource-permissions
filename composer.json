@@ -28,7 +28,10 @@
         "phpunit/phpunit": "^9.0|^10.0|^11.0"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit"
+        "test": "vendor/bin/phpunit --exclude-group=benchmark --exclude-group=benchmark-report",
+        "test:performance": "vendor/bin/phpunit tests/Performance/CIPerformanceTest.php",
+        "test:benchmark": "vendor/bin/phpunit --group=benchmark",
+        "benchmark:report": "vendor/bin/phpunit tests/Performance/BenchmarkReportTest.php"
     },
     "config": {
         "preferred-install": "dist",
