@@ -2,12 +2,12 @@
 
 namespace Fishdaa\LaravelResourcePermissions\Tests;
 
-use Fishdaa\LaravelResourcePermissions\Traits\HasAssignedUsers;
+use Fishdaa\LaravelResourcePermissions\Traits\HasAssignedModels;
 use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
-    use HasAssignedUsers;
+    use HasAssignedModels;
 
     protected $fillable = [
         'title',

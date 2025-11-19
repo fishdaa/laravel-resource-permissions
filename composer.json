@@ -32,7 +32,9 @@
     },
     "config": {
         "preferred-install": "dist",
-        "github-protocols": ["https"]
+        "github-protocols": [
+            "https"
+        ]
     },
     "autoload": {
         "psr-4": {
