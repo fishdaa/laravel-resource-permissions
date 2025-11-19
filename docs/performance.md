@@ -143,4 +143,4 @@ Performance tests run automatically on every push via GitHub Actions. The workfl
 2. Fails if performance degrades beyond thresholds
 3. Reports timing and query metrics
 
-View results at: `https://github.com/your-repo/actions`
+View results at: `https://github.com/fishdaa/laravel-resource-permissions/actions`
