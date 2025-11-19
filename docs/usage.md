@@ -433,14 +433,6 @@ $hasRole = ModelHasResourceAndPermission::forModelAndResource($user, $article)
     ->exists();
 ```
 
-### forUserAndResource() (Deprecated)
-
-**Deprecated:** Use `forModelAndResource()` instead. This method is kept for backward compatibility. **Will be removed in 0.3.0.**
-
-```php
-ModelHasResourceAndPermission::forUserAndResource($user, $resource): Builder
-```
-
 ### wherePermissionName()
 
 Scope to filter by permission name (automatically joins with permissions table).
@@ -501,103 +493,101 @@ class Article extends Model
 }
 ```
 
-### getAssignedUsers()
+### getAssignedModels()
 
-Get all users assigned to this resource (with permissions or roles). Optionally filter to only specific users.
+Get all models assigned to this resource (with permissions or roles). Optionally filter to only specific models.
 
 ```php
-$article->getAssignedUsers($users = null): Collection
+$article->getAssignedModels($models = null): Collection
 ```
 
 **Parameters:**
-- `$users` (array|Collection|null): Optional array of user IDs or User model instances to filter
+- `$models` (array|Collection|null): Optional array of model instances to filter
 
-**Returns:** `Collection` of User models
+**Returns:** `Collection` of model instances
 
 **Example:**
 ```php
 $article = Article::find(1);
 
-// Get all users assigned to this article
-$users = $article->getAssignedUsers();
+// Get all models assigned to this article
+$models = $article->getAssignedModels();
 
-// Get only specific users that are assigned
-$specificUsers = $article->getAssignedUsers([$user1, $user2, $user3]);
-// Or with IDs
-$specificUsers = $article->getAssignedUsers([1, 2, 3]);
+// Get only specific models that are assigned
+$specificModels = $article->getAssignedModels([$user1, $team1]);
 
-// Since User models have HasResourcePermissions trait, you can:
-foreach ($users as $user) {
-    // Get permissions for this user on this article
-    $permissions = $user->getPermissionsForResource($article);
+// Since models have HasResourcePermissions trait, you can:
+foreach ($models as $model) {
+    // Get permissions for this model on this article
+    $permissions = $model->getPermissionsForResource($article);
     
-    // Get roles for this user on this article
-    $roles = $user->getRolesForResource($article);
+    // Get roles for this model on this article
+    $roles = $model->getRolesForResource($article);
     
     // Check specific permissions
-    if ($user->hasPermissionForResource('edit-article', $article)) {
-        // User can edit this article
+    if ($model->hasPermissionForResource('edit-article', $article)) {
+        // Model can edit this article
     }
 }
 ```
 
-### hasUserAssigned()
+### hasModelAssigned()
 
-Check if a specific user is assigned to this resource.
+Check if a specific model is assigned to this resource.
 
 ```php
-$article->hasUserAssigned($user): bool
+$article->hasModelAssigned($model): bool
 ```
 
 **Parameters:**
-- `$user` (Model|int): User model instance or user ID
+- `$model` (Model): Model instance
 
 **Returns:** `bool`
 
 **Example:**
 ```php
-if ($article->hasUserAssigned($user)) {
+if ($article->hasModelAssigned($user)) {
     // User is assigned to this article
 }
 ```
 
-### hasAllUsersAssigned()
+### hasAllModelsAssigned()
 
-Check if all specified users are assigned to this resource.
+Check if all specified models are assigned to this resource.
 
 ```php
-$article->hasAllUsersAssigned($users): bool
+$article->hasAllModelsAssigned($models): bool
 ```
 
 **Parameters:**
-- `$users` (array|Collection): Array of user IDs or User model instances
+- `$models` (array|Collection): Array of model instances
 
 **Returns:** `bool`
 
 **Example:**
 ```php
-if ($article->hasAllUsersAssigned([$user1, $user2])) {
-    // Both users are assigned
+if ($article->hasAllModelsAssigned([$user1, $team1])) {
+    // Both models are assigned
 }
 ```
 
-### hasAnyUserAssigned()
+### hasAnyModelAssigned()
 
-Check if any of the specified users are assigned to this resource.
+Check if any of the specified models are assigned to this resource.
 
 ```php
-$article->hasAnyUserAssigned($users): bool
+$article->hasAnyModelAssigned($models): bool
 ```
 
 **Parameters:**
-- `$users` (array|Collection): Array of user IDs or User model instances
+- `$models` (array|Collection): Array of model instances
 
 **Returns:** `bool`
 
 **Example:**
 ```php
-if ($article->hasAnyUserAssigned([$user1, $user2])) {
-    // At least one user is assigned
+if ($article->hasAnyModelAssigned([$user1, $team1])) {
+    // At least one model is assigned
 }
 ```
 
@@ -633,16 +623,6 @@ foreach ($models as $model) {
 }
 ```
 
-### getUsersForResource() (Deprecated)
-
-**Deprecated:** Use `getModelsForResource()` instead. This method is kept for backward compatibility and only returns User models. **Will be removed in 0.3.0.**
-
-```php
-ModelHasResourceAndPermission::getUsersForResource($resource, $users = null): Collection
-```
-
-**Returns:** `Collection` of User models only
-
 ### isModelAssignedToResource() (Static Method)
 
 Check if a model is assigned to a resource using static method. Works with any model type.
@@ -661,14 +641,6 @@ ModelHasResourceAndPermission::isModelAssignedToResource($model, $resource): boo
 ```php
 $isAssigned = ModelHasResourceAndPermission::isModelAssignedToResource($user, $article);
 $isTeamAssigned = ModelHasResourceAndPermission::isModelAssignedToResource($team, $article);
-```
-
-### isUserAssignedToResource() (Deprecated)
-
-**Deprecated:** Use `isModelAssignedToResource()` instead. This method is kept for backward compatibility. **Will be removed in 0.3.0.**
-
-```php
-ModelHasResourceAndPermission::isUserAssignedToResource($user, $resource): bool
 ```
 
 **Note:** The methods return distinct models - if a model has both permissions and roles for the resource, they will only appear once in the collection.
