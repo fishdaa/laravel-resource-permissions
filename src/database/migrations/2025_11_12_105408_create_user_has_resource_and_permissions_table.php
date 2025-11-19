@@ -29,10 +29,10 @@ return new class extends Migration
             $table->unique(['model_type', 'model_id', 'resource_type', 'resource_id', 'role_id'], 'model_resource_role_unique');
 
             // Indexes for polymorphic queries
-            $table->index(['model_type', 'model_id']);
-            $table->index(['resource_type', 'resource_id']);
-            $table->index('permission_id');
-            $table->index('role_id');
+            $table->index(['model_type', 'model_id'], 'mhrp_model_idx');
+            $table->index(['resource_type', 'resource_id'], 'mhrp_resource_idx');
+            $table->index('permission_id', 'mhrp_permission_idx');
+            $table->index('role_id', 'mhrp_role_idx');
         });
     }
 
