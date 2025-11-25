@@ -2,10 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.3.1] - 2025-11-19
+## [0.4.0] - 2025-11-25
+
+### Added
+- Extended `can()` method to support resource-specific permissions
+- UUID support with separate configuration options for primary key and models
+- Comprehensive testing infrastructure
+- SECURITY.md for GitHub security policy
+
+### Changed
+- Updated benchmark results and fixed benchmark report command
 
 ### Fixed
-- Fixed MySQL error caused by auto-generated index names exceeding 64-character limit in migration
+- Shortened migration index names to avoid MySQL 64-character limit
+- Fixed PHPUnit compatibility issues with exclude-group syntax for PHPUnit 10+ and 11+
+
+### Refactored
+- Consolidated performance test logic and use polymorphic benchmarks for all scales
+- Moved benchmark test exclusions to phpunit.xml
+
+### CI
+- Removed PHP 8.0 from test matrix due to dependency conflicts
+- Removed CodeQL workflow (PHP not supported)
+- Setup GitHub CodeQL and Dependabot
 
 ## [0.3.2] - 2025-11-19
 
@@ -19,6 +38,11 @@ All notable changes to this project will be documented in this file.
   - Query analysis and index verification
   - Memory usage tracking
   - Performance documentation (`docs/performance.md`)
+
+## [0.3.1] - 2025-11-19
+
+### Fixed
+- Fixed MySQL error caused by auto-generated index names exceeding 64-character limit in migration
 
 ## [0.3.0] - 2025-11-19
 
