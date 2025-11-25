@@ -5,6 +5,7 @@ namespace Fishdaa\LaravelResourcePermissions\Traits;
 use Fishdaa\LaravelResourcePermissions\Models\ModelHasResourceAndPermission;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Contracts\Permission as PermissionContract;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Spatie\Permission\Models\Permission;
@@ -12,6 +13,54 @@ use Spatie\Permission\Models\Role;
 
 trait HasResourcePermissions
 {
+    /**
+     * Determine if the model has the given ability.
+     * Extends Spatie's can() method to also check resource-specific permissions.
+     *
+     * @param  string  $ability
+     * @param  array|mixed  $arguments
+     * @return bool
+     */
+    public function can($ability, $arguments = [])
+    {
+        // If arguments are provided and the first argument is a model instance (resource),
+        // check both global and resource-specific permissions
+        if (!empty($arguments)) {
+            $resource = is_array($arguments) ? ($arguments[0] ?? null) : $arguments;
+            
+            // Check if resource is a model instance
+            if ($resource instanceof \Illuminate\Database\Eloquent\Model) {
+                // Check global permission first (Spatie's default behavior via hasPermissionTo)
+                $hasGlobalPermission = false;
+                if (method_exists($this, 'hasPermissionTo')) {
+                    $hasGlobalPermission = $this->hasPermissionTo($ability);
+                } else {
+                    // Fallback to Gate if hasPermissionTo is not available
+                    $hasGlobalPermission = Gate::forUser($this)->allows($ability, $arguments);
+                }
+                
+                // Check resource-specific permission
+                $hasResourcePermission = $this->hasPermissionForResource($ability, $resource);
+                
+                // User can perform action if they have global OR resource-specific permission
+                return $hasGlobalPermission || $hasResourcePermission;
+            }
+        }
+        
+        // For non-resource checks, check if it's a Spatie permission first
+        // If hasPermissionTo exists (from Spatie's HasRoles trait), use it
+        if (method_exists($this, 'hasPermissionTo')) {
+            // Check if the ability matches a permission name
+            $permission = Permission::where('name', $ability)->first();
+            if ($permission) {
+                return $this->hasPermissionTo($ability);
+            }
+        }
+        
+        // Fall back to Gate for policy-based authorization or other abilities
+        return Gate::forUser($this)->allows($ability, $arguments);
+    }
+
     /**
      * Check if this model has a specific permission for a resource.
      *

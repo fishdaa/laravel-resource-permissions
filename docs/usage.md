@@ -324,6 +324,51 @@ if ($user->hasPermissionTo('edit-article') ||
 }
 ```
 
+### Using can() with Resource Permissions
+
+The `can()` method is extended to automatically check resource-specific permissions when a resource is provided:
+
+```php
+$article = Article::find(1);
+
+// Check global permission (Spatie's default behavior)
+$user->can('edit-article'); // Checks global permission only
+
+// Check resource-specific permission (automatically checks both global and resource)
+$user->can('edit-article', $article); // Checks global OR resource-specific permission
+```
+
+**How it works:**
+
+1. **With a resource:** When you pass a model instance as the second argument, `can()` checks both:
+   - Global permission via `hasPermissionTo()` (if Spatie's `HasRoles` trait is used)
+   - Resource-specific permission via `hasPermissionForResource()`
+   - Returns `true` if either check passes
+
+2. **Without a resource:** Falls back to Spatie's default behavior:
+   - Checks if the ability matches a permission name and uses `hasPermissionTo()`
+   - Otherwise uses Laravel's Gate system for policy-based authorization
+
+**Examples:**
+
+```php
+$article1 = Article::find(1);
+$article2 = Article::find(2);
+
+// User has global permission
+$user->givePermissionTo('edit-article');
+$user->can('edit-article'); // true
+$user->can('edit-article', $article1); // true
+$user->can('edit-article', $article2); // true
+
+// User has only resource-specific permission
+$user->revokePermissionTo('edit-article');
+$user->givePermissionToResource('edit-article', $article1);
+$user->can('edit-article'); // false (no global permission)
+$user->can('edit-article', $article1); // true (has resource permission)
+$user->can('edit-article', $article2); // false (no permission for this resource)
+```
+
 ## Static Helper Methods
 
 The `ModelHasResourceAndPermission` model provides static helper methods that simplify common permission and role checking patterns without needing to write raw database queries.

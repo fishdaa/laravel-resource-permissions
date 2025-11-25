@@ -203,5 +203,61 @@ class SpatieIntegrationTest extends TestCase
 
         $this->assertTrue($canEdit);
     }
+
+    public function test_can_method_checks_resource_permissions(): void
+    {
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $article = Article::create(['title' => 'Test Article', 'content' => 'Test content']);
+        Permission::create(['name' => 'edit-article']);
+
+        // User has no global permission
+        $this->assertFalse($user->can('edit-article'));
+
+        // User has no resource permission
+        $this->assertFalse($user->can('edit-article', $article));
+
+        // Give resource-specific permission
+        $user->givePermissionToResource('edit-article', $article);
+
+        // Now can() should return true for this resource
+        $this->assertTrue($user->can('edit-article', $article));
+
+        // But still false for global check (no global permission)
+        $this->assertFalse($user->can('edit-article'));
+
+        // Give global permission
+        $user->givePermissionTo('edit-article');
+
+        // Now both should work
+        $this->assertTrue($user->can('edit-article'));
+        $this->assertTrue($user->can('edit-article', $article));
+    }
+
+    public function test_can_method_with_multiple_resources(): void
+    {
+        $user = User::create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $article1 = Article::create(['title' => 'Article 1', 'content' => 'Content 1']);
+        $article2 = Article::create(['title' => 'Article 2', 'content' => 'Content 2']);
+        Permission::create(['name' => 'edit-article']);
+
+        // Give permission only for article1
+        $user->givePermissionToResource('edit-article', $article1);
+
+        // Can edit article1
+        $this->assertTrue($user->can('edit-article', $article1));
+
+        // Cannot edit article2
+        $this->assertFalse($user->can('edit-article', $article2));
+    }
 }
 
