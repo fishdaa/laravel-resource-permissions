@@ -36,6 +36,42 @@ class ModelHasResourceAndPermission extends Model
     ];
 
     /**
+     * Create a new Eloquent model instance.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        // Set UUID properties based on configuration for primary key
+        $useUuids = config('resource-permissions.use_uuids', false);
+        
+        if ($useUuids) {
+            $this->incrementing = false;
+            $this->keyType = 'string';
+        }
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $useUuids = config('resource-permissions.use_uuids', false);
+            
+            // Generate UUID for primary key if using UUIDs
+            if ($useUuids && !$model->id) {
+                $model->id = \Illuminate\Support\Str::uuid()->toString();
+            }
+        });
+    }
+
+    /**
      * Get the model that owns the resource permission.
      */
     public function model(): MorphTo

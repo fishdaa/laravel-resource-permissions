@@ -76,6 +76,7 @@ For detailed documentation, please see the [docs folder](docs/README.md).
 
 - [Installation Guide](docs/installation.md)
 - [Configuration](docs/configuration.md)
+- [UUID Setup](docs/uuid-setup.md) - Configure UUIDs instead of integer IDs
 - [Usage & API Reference](docs/usage.md)
 - [Spatie Integration](docs/integration.md)
 - [Examples](docs/examples.md)
