@@ -31,7 +31,7 @@
         "test": "vendor/bin/phpunit",
         "test:performance": "vendor/bin/phpunit tests/Performance/CIPerformanceTest.php",
         "test:benchmark": "vendor/bin/phpunit --group=benchmark",
-        "benchmark:report": "vendor/bin/phpunit tests/Performance/BenchmarkReportTest.php"
+        "benchmark:report": "vendor/bin/phpunit tests/Performance/BenchmarkReportTest.php --group=benchmark-report"
     },
     "config": {
         "preferred-install": "dist",

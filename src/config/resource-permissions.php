@@ -46,5 +46,40 @@ return [
     |
     */
     'role_model' => \Spatie\Permission\Models\Role::class,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Use UUIDs for Primary Key
+    |--------------------------------------------------------------------------
+    |
+    | When set to true, the package will use UUIDs instead of auto-incrementing
+    | integers for the primary key (id column).
+    |
+    | Important: Set this BEFORE running migrations. Changing this after migrations
+    | have been run will require manual database changes.
+    |
+    */
+    'use_uuids' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Use UUIDs for Models
+    |--------------------------------------------------------------------------
+    |
+    | When set to true, the package will use UUIDs instead of integers for
+    | polymorphic foreign keys (model_id and resource_id columns).
+    |
+    | This is independent of the primary key UUID setting. You can use UUIDs
+    | for models while keeping integer primary keys, or vice versa.
+    |
+    | Important: If you enable this, ensure that:
+    | - Your User model (or other models) uses UUIDs as primary keys
+    | - Your resource models use UUIDs as primary keys
+    |
+    | Set this BEFORE running migrations. Changing this after migrations have
+    | been run will require manual database changes.
+    |
+    */
+    'use_uuids_for_models' => false,
 ];
 

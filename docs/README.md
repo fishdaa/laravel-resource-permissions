@@ -8,6 +8,7 @@ Welcome to the Laravel Resource Permissions documentation. This package extends 
 
 - **[Installation Guide](installation.md)** - How to install and set up the package
 - **[Configuration](configuration.md)** - Configuration options and customization
+- **[UUID Setup](uuid-setup.md)** - How to configure the package to use UUIDs instead of integer IDs
 
 ## Usage
 

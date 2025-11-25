@@ -1,6 +1,6 @@
 # Performance Benchmarks
 
-> **Last Updated:** 2025-11-19 07:20:47 UTC
+> **Last Updated:** 2025-11-25 00:28:41 UTC
 
 ## Test Environment
 
@@ -26,9 +26,9 @@ Performance at scale with large datasets (Mixed Models). Results are averaged ov
 
 | Dataset Size | Avg Time | P90 Time | Min Time | Max Time | Queries | Peak Memory |
 |--------------|----------|----------|----------|----------|---------|-------------|
-| 100,000 records | 2.63ms | 3.84ms | 1.69ms | 4.17ms | 11 | 44.5MB |
-| 500,000 records | 8.87ms | 9.62ms | 7.79ms | 14.56ms | 31 | 46.5MB |
-| 1,000,000 records | 17.29ms | 17.93ms | 16.46ms | 18.37ms | 51 | 50.5MB |
+| 100,000 records | 2.27ms | 2.75ms | 1.82ms | 3.65ms | 11 | 44.5MB |
+| 500,000 records | 8.13ms | 8.41ms | 7.51ms | 11.52ms | 31 | 46.5MB |
+| 1,000,000 records | 16.12ms | 16.73ms | 15.53ms | 17.2ms | 51 | 50.5MB |
 
 ## Key Findings
 

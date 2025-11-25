@@ -55,6 +55,37 @@ The permission model from Spatie Laravel Permission. Only change this if you're 
 
 The role model from Spatie Laravel Permission. Only change this if you're using a custom role model that extends Spatie's Role model.
 
+### Use UUIDs for Primary Key
+
+```php
+'use_uuids' => false,
+```
+
+When set to `true`, the package will use UUIDs instead of auto-incrementing integers for the primary key (`id`) and related foreign keys (`permission_id`, `role_id`, `created_by`).
+
+**Default:** `false` (uses auto-incrementing integers)
+
+**Important:** 
+- Set this **BEFORE** running migrations. Changing this after migrations have been run will require manual database changes.
+- If you enable this, ensure that your Spatie Permission tables (`permissions`, `roles`) and users table also use UUIDs.
+
+### Use UUIDs for Models
+
+```php
+'use_uuids_for_models' => false,
+```
+
+When set to `true`, the package will use UUIDs instead of integers for polymorphic foreign keys (`model_id`, `resource_id`).
+
+**Default:** `false` (uses integers)
+
+**Important:** 
+- This option is **independent** of `use_uuids`. You can enable UUIDs for models while keeping integer primary keys, or vice versa.
+- Set this **BEFORE** running migrations. Changing this after migrations have been run will require manual database changes.
+- If you enable this, ensure that your User model and resource models use UUIDs as primary keys.
+
+For detailed instructions on setting up UUIDs, see the [UUID Setup Guide](uuid-setup.md).
+
 ## Custom User Model
 
 If you're using a custom user model, update the configuration:

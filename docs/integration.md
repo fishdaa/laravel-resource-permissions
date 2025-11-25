@@ -80,6 +80,32 @@ public function update(User $user, Article $article): bool
 }
 ```
 
+### Using can() Method
+
+The `can()` method is automatically extended to check resource permissions when a resource is provided:
+
+```php
+// Check global permission
+$user->can('edit-article'); // Uses Spatie's hasPermissionTo()
+
+// Check with resource (automatically checks both global and resource permissions)
+$user->can('edit-article', $article); // Checks hasPermissionTo() OR hasPermissionForResource()
+```
+
+This makes it easy to use Laravel's standard authorization methods while benefiting from resource-specific permissions:
+
+```php
+// In controllers
+if ($user->can('edit-article', $article)) {
+    // User can edit this specific article
+}
+
+// In Blade templates
+@can('edit-article', $article)
+    <a href="{{ route('articles.edit', $article) }}">Edit</a>
+@endcan
+```
+
 ## Roles
 
 The same applies to roles:
