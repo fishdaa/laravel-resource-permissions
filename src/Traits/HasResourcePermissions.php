@@ -76,8 +76,22 @@ trait HasResourcePermissions
             return false;
         }
 
-        return $this->getResourcePermissions($resource)
-            ->contains('id', $permission->id);
+        if ($this->getResourcePermissions($resource)
+            ->contains('id', $permission->id)) {
+            return true;
+        }
+
+        // Check if any role assigned for this resource has the permission
+        // We use fresh roles to ensure we get the latest permissions if they changed
+        $roles = $this->getRolesForResource($resource);
+        
+        foreach ($roles as $role) {
+            if ($role->hasPermissionTo($permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
